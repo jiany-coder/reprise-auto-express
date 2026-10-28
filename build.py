@@ -227,12 +227,14 @@ def head(title, desc, path, schema, noindex=False, og_image=True):
 
 def header():
     nav = "".join(f'<a href="/{v["slug"]}/">{E(v["nav"])}</a>' for v in VEHICLES[:5])
-    cta = f'<a class="btn btn-red" href="#estimation">Je vends mon véhicule</a>'
+    nav += "".join(f'<a class="mo" href="/{v["slug"]}/">{E(v["nav"])}</a>' for v in VEHICLES[5:])
+    cta = '<a class="btn btn-red" href="#estimation">Je vends mon véhicule</a>'
     tel = f'<a class="tel" href="{phone_href()}">{E(PHONE)}</a>' if PHONE else ""
-    return f"""<header class="hd"><div class="wrap hd-in">
+    return f"""<div class="ann"><div class="wrap">Déplacement à domicile sous 24 h · Paiement par virement ou espèces</div></div>
+<header class="hd"><div class="wrap hd-in">
 <a class="brand" href="/" aria-label="Reprise Auto Express – accueil"><img src="/assets/logo-header.jpg" width="75" height="88" alt="Reprise Auto Express – rachat de véhicule et utilitaire"></a>
-<nav class="nav" aria-label="Navigation principale"><a href="/reprise-voiture-vannes/">Vannes</a>{nav}<a href="/zone-intervention-morbihan/">Zones</a></nav>
-<div class="hd-cta">{tel}{cta}</div></div></header>"""
+<nav class="nav" id="nav" aria-label="Navigation principale"><a href="/reprise-voiture-vannes/">Vannes</a>{nav}<a href="/zone-intervention-morbihan/">Zones</a></nav>
+<div class="hd-cta">{tel}{cta}<button class="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav"><span></span></button></div></div></header>"""
 
 def footer():
     vl = "".join(f'<li><a href="/{v["slug"]}/">{E(v["h1"])}</a></li>' for v in VEHICLES)
@@ -280,17 +282,19 @@ def ld_service(name, path, area):
 def form(default_commune=""):
     opts = "".join(f'<option value="{E(c["name"])} ({c["cp"]})">' for c in communes)
     return f"""<section class="est" id="estimation"><div class="wrap"><div class="est-card">
-<h2>Estimation gratuite de votre véhicule</h2><p class="muted">Réponse rapide. Sans obligation d'achat.</p>
+<h2>Estimation gratuite de votre véhicule</h2><p class="muted">Un conseiller vous rappelle rapidement. Sans obligation d'achat.</p>
 <form id="est-form" novalidate>
 <div class="g2"><label>Type de véhicule<select name="type" required><option>Voiture</option><option>Voiture sans permis</option><option>Camping-car</option><option>Utilitaire</option><option>Camion</option></select></label>
-<label>État<select name="etat"><option>Roulant, bon état</option><option>Sans contrôle technique</option><option>Recalé au contrôle technique</option><option>HS / en panne</option><option>Accidenté</option></select></label></div>
-<div class="g3"><label>Marque<input name="marque" required></label><label>Modèle<input name="modele" required></label><label>Année<input name="annee" inputmode="numeric" required></label></div>
-<div class="g3"><label>Kilométrage<input name="km" inputmode="numeric" required></label>
+<label>Commune ou code postal<input name="commune" list="communes" value="{E(default_commune)}" required autocomplete="off"></label></div>
+<div class="g2 k"><label>Marque<input name="marque" required></label><label>Modèle<input name="modele" required></label></div>
+<div class="g2 k"><label>Année<input name="annee" inputmode="numeric" required></label><label>Kilométrage<input name="km" inputmode="numeric" required></label></div>
+<div class="g2"><label>Nom<input name="nom" required autocomplete="name"></label><label>Téléphone<input name="tel" type="tel" required autocomplete="tel"></label></div>
+<details class="more"><summary>Ajouter des précisions (facultatif)</summary><div class="g3">
+<label>État<select name="etat"><option>Roulant, bon état</option><option>Sans contrôle technique</option><option>Recalé au contrôle technique</option><option>HS / en panne</option><option>Accidenté</option></select></label>
 <label>Énergie<select name="energie"><option>Diesel</option><option>Essence</option><option>Hybride</option><option>Électrique</option><option>GPL</option></select></label>
-<label>Commune ou code postal<input name="commune" list="communes" value="{E(default_commune)}" required></label></div>
+<label>E-mail<input name="mail" type="email" autocomplete="email"></label></div></details>
 <datalist id="communes">{opts}</datalist>
-<div class="g3"><label>Nom<input name="nom" required></label><label>Téléphone<input name="tel" type="tel" required></label><label>E-mail<input name="mail" type="email"></label></div>
-<button class="btn btn-red btn-lg" type="submit">Recevoir mon estimation</button>
+<button class="btn btn-red btn-lg btn-block" type="submit">Recevoir mon estimation</button>
 <p class="fine">Les informations transmises servent uniquement à étudier votre demande et à vous recontacter.</p>
 <p id="est-msg" class="msg" role="status" hidden></p></form></div></div></section>"""
 
@@ -298,8 +302,23 @@ def steps_html():
     items = "".join(f'<li><span class="n">{i+1}</span><h3>{t}</h3><p>{d}</p></li>' for i, (t, d) in enumerate(STEPS))
     return f'<section class="sec"><div class="wrap"><h2>Comment fonctionne le rachat ?</h2><ol class="steps">{items}</ol></div></section>'
 
+ICONS = {
+ "car": '<svg viewBox="0 0 48 36" aria-hidden="true"><path d="M4 24l3-9c1-3 3-5 7-5h14c3 0 5 1 7 4l6 4c2 1 3 2 3 5v3H4z" fill="currentColor"/><circle cx="14" cy="28" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/><circle cx="36" cy="28" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/></svg>',
+ "camper": '<svg viewBox="0 0 48 36" aria-hidden="true"><path d="M3 11c0-2 1-4 4-4h30c2 0 4 1 5 3l4 8v9H3z" fill="currentColor"/><rect x="9" y="12" width="10" height="7" rx="1.5" fill="#fff"/><rect x="23" y="12" width="9" height="7" rx="1.5" fill="#fff"/><circle cx="14" cy="28" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/><circle cx="37" cy="28" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/></svg>',
+ "van": '<svg viewBox="0 0 48 36" aria-hidden="true"><path d="M3 8h27v19H3zM30 13h9l7 7v7H30z" fill="currentColor"/><circle cx="13" cy="28" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/><circle cx="37" cy="28" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/></svg>',
+ "truck": '<svg viewBox="0 0 48 36" aria-hidden="true"><path d="M2 5h28v22H2zM30 11h10l6 8v8H30z" fill="currentColor"/><circle cx="12" cy="29" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/><circle cx="21" cy="29" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/><circle cx="38" cy="29" r="4" fill="#fff" stroke="currentColor" stroke-width="2.5"/></svg>',
+ "doc": '<svg viewBox="0 0 48 36" aria-hidden="true"><path d="M14 2h15l8 8v24H14z" fill="currentColor"/><path d="M20 17l12 12M32 17L20 29" stroke="#fff" stroke-width="3"/></svg>',
+ "warn": '<svg viewBox="0 0 48 36" aria-hidden="true"><path d="M24 2L45 34H3z" fill="currentColor"/><rect x="22.3" y="13" width="3.4" height="10" fill="#fff"/><rect x="22.3" y="26" width="3.4" height="3.4" fill="#fff"/></svg>',
+}
+VICON = {"rachat-voiture-morbihan": "car", "rachat-voiture-sans-permis-morbihan": "car", "rachat-camping-car-morbihan": "camper",
+         "rachat-utilitaire-morbihan": "van", "rachat-camion-morbihan": "truck",
+         "rachat-voiture-sans-controle-technique-morbihan": "doc", "rachat-vehicule-hs-accidente-morbihan": "warn"}
+
+def vcard(v, txt):
+    return f'<a class="card" href="/{v["slug"]}/"><span class="ic">{ICONS[VICON[v["slug"]]]}</span><div><h3>{E(v["h1"])}</h3><p>{txt}</p></div></a>'
+
 def vehicles_grid():
-    cards = "".join(f'<a class="card" href="/{v["slug"]}/"><h3>{E(v["h1"])}</h3><p>{E(v["lead"][:118].rsplit(" ",1)[0])}…</p><span>En savoir plus →</span></a>' for v in VEHICLES)
+    cards = "".join(vcard(v, E(v["lead"][:118].rsplit(" ", 1)[0]) + "…") for v in VEHICLES)
     return f'<section class="sec alt"><div class="wrap"><h2>Tous les véhicules que nous rachetons</h2><div class="cards">{cards}</div></div></section>'
 
 def faq_html(faq, title="Questions fréquentes"):
@@ -307,16 +326,21 @@ def faq_html(faq, title="Questions fréquentes"):
     return f'<section class="sec"><div class="wrap narrow"><h2>{title}</h2>{items}</div></section>'
 
 def compare_table():
-    return """<section class="sec alt"><div class="wrap"><h2>Vente à un particulier, en concession ou à Reprise Auto Express : le comparatif</h2>
-<div class="tw"><table><thead><tr><th></th><th>Entre particuliers</th><th>En concession (reprise)</th><th>Reprise Auto Express</th></tr></thead><tbody>
-<tr><th>Annonce et visites</th><td>Oui, à gérer</td><td>Non</td><td>Non</td></tr>
-<tr><th>Contrôle technique de moins de 6 mois</th><td>Obligatoire</td><td>Non</td><td>Non</td></tr>
-<tr><th>Véhicule HS, accidenté, très kilométré</th><td>Très difficile</td><td>Souvent refusé</td><td>Étudié au cas par cas</td></tr>
-<tr><th>Obligation d'achat d'un autre véhicule</th><td>Non</td><td>Souvent liée</td><td>Non</td></tr>
-<tr><th>Déplacement à domicile</th><td>Vous recevez des visiteurs</td><td>Vous vous déplacez</td><td>Oui, sous 24 h</td></tr>
-<tr><th>Paiement</th><td>Variable, risque d'impayé</td><td>Variable</td><td>Virement ou espèces (limite légale)</td></tr>
-<tr><th>Démarches de cession</th><td>À votre charge</td><td>Prises en charge</td><td>Prises en charge</td></tr>
-<tr><th>Offre ferme après expertise</th><td>Négociable</td><td>Oui</td><td>Oui</td></tr></tbody></table></div></div></section>"""
+    cols = ["Entre particuliers", "En concession (reprise)", "Reprise Auto Express"]
+    rows = [
+     ("Annonce et visites", "Oui, à gérer", "Non", "Non"),
+     ("Contrôle technique de moins de 6 mois", "Obligatoire", "Non", "Non"),
+     ("Véhicule HS, accidenté, très kilométré", "Très difficile", "Souvent refusé", "Étudié au cas par cas"),
+     ("Obligation d'achat d'un autre véhicule", "Non", "Souvent liée", "Non"),
+     ("Déplacement à domicile", "Vous recevez des visiteurs", "Vous vous déplacez", "Oui, sous 24 h"),
+     ("Paiement", "Variable, risque d'impayé", "Variable", "Virement ou espèces (limite légale)"),
+     ("Démarches de cession", "À votre charge", "Prises en charge", "Prises en charge"),
+     ("Offre ferme après expertise", "Négociable", "Oui", "Oui"),
+    ]
+    body = "".join("<tr><th>%s</th>%s</tr>" % (r[0], "".join('<td data-label="%s">%s</td>' % (cols[i], r[i + 1]) for i in range(3))) for r in rows)
+    head = "".join("<th>%s</th>" % c for c in cols)
+    return f'''<section class="sec alt"><div class="wrap"><h2>Vente à un particulier, en concession ou à Reprise Auto Express : le comparatif</h2>
+<div class="tw"><table class="cmp"><thead><tr><th></th>{head}</tr></thead><tbody>{body}</tbody></table></div></div></section>'''
 
 def zone_links(names, title):
     lis = "".join(f'<li><a href="/reprise-voiture-{BY_SLUG[slugify(n)]["slug"]}/">{E(n)}</a></li>' for n in names)
@@ -416,7 +440,7 @@ def build():
         body += steps_html()
         body += faq_html(v["faq"], f"Questions sur le rachat de {E(v['name'])}")
         others = [x for x in VEHICLES if x["slug"] != v["slug"]]
-        body += '<section class="sec alt"><div class="wrap"><h2>Autres véhicules rachetés</h2><div class="cards">' + "".join(f'<a class="card" href="/{x["slug"]}/"><h3>{E(x["h1"])}</h3><span>Voir →</span></a>' for x in others[:4]) + "</div></div></section>"
+        body += '<section class="sec alt"><div class="wrap"><h2>Autres véhicules rachetés</h2><div class="cards">' + "".join(vcard(x, "Voir le rachat →") for x in others[:4]) + "</div></div></section>"
         body += zone_links(TOP[:12], f"Rachat de {E(v['name'])} près de chez vous")
         schema = [ld_business(), ld_service(v["h1"], path, {"@type": "AdministrativeArea", "name": "Morbihan"}), ld_faq(v["faq"]), ld_breadcrumb(crumbs)]
         page(path, v["title"], v["desc"], schema, body, crumbs, hero(v["h1"], v["lead"], "Reprise Auto Express · Morbihan (56)", True))
@@ -498,7 +522,7 @@ def build():
         body += "</div></section>"
         if e: body += enriched_html(c, e)
         body += steps_html()
-        cards = "".join(f'<a class="card" href="/{v["slug"]}/"><h3>{E(v["nav"])} {prep(nm) if False else ""}</h3><p>{E(v["h1"])}</p></a>' for v in VEHICLES[:5])
+        cards = "".join(vcard(v, "Voir le rachat →") for v in VEHICLES[:5])
         body += f'<section class="sec alt"><div class="wrap"><h2>Véhicules rachetés {prep(nm)}</h2><div class="cards">{cards}</div></div></section>'
         body += faq_html(faq, f"Reprise de voiture {prep(nm)} : questions fréquentes")
         pool = [x for x in communes if x["slug"] not in (c["slug"],)]
