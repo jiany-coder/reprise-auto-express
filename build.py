@@ -227,10 +227,10 @@ def head(title, desc, path, schema, noindex=False, og_image=True):
 
 def header():
     nav = "".join(f'<a href="/{v["slug"]}/">{E(v["nav"])}</a>' for v in VEHICLES[:5])
-    cta = f'<a class="btn btn-red" href="#estimation">Estimation gratuite</a>'
+    cta = f'<a class="btn btn-red" href="#estimation">Je vends mon véhicule</a>'
     tel = f'<a class="tel" href="{phone_href()}">{E(PHONE)}</a>' if PHONE else ""
     return f"""<header class="hd"><div class="wrap hd-in">
-<a class="brand" href="/" aria-label="{BRAND} – accueil"><svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0b2a5b"/><path d="M10 40c2-9 9-14 18-14h8c7 0 13 4 18 9l2 5H10z" fill="#e11d2a"/><circle cx="22" cy="43" r="5" fill="#fff"/><circle cx="46" cy="43" r="5" fill="#fff"/></svg><span><b>Reprise</b> Auto Express<small>Rachat de véhicules · Morbihan</small></span></a>
+<a class="brand" href="/" aria-label="Reprise Auto Express – accueil"><img src="/assets/logo-header.jpg" width="75" height="88" alt="Reprise Auto Express – rachat de véhicule et utilitaire"></a>
 <nav class="nav" aria-label="Navigation principale"><a href="/reprise-voiture-vannes/">Vannes</a>{nav}<a href="/zone-intervention-morbihan/">Zones</a></nav>
 <div class="hd-cta">{tel}{cta}</div></div></header>"""
 
