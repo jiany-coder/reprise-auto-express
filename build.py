@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # Générateur du site statique Reprise Auto Express (Morbihan)
 import os, re, json, html, hashlib, unicodedata, shutil, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from enrich import ENRICH
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "dist")
@@ -68,7 +70,7 @@ VEHICLES = [
    ("Quelle voiture pouvez-vous racheter dans le Morbihan ?", "Toutes les voitures particulières, quelle que soit la motorisation : essence, diesel, hybride, électrique ou GPL. Un véhicule ancien, très kilométré ou à réparer peut aussi être repris, au prix de son état réel."),
    ("Faut-il passer le contrôle technique avant de vendre ?", "Non. Le contrôle technique de moins de 6 mois est exigé pour vendre à un particulier. Pour une vente à un professionnel de l'automobile, il n'est pas demandé : votre voiture est reprise dans l'état."),
    ("Puis-je vendre une voiture encore en crédit ?", "Dans certains cas oui : le solde doit être régularisé auprès de l'organisme de financement. Indiquez-le dès la demande d'estimation pour que le dossier soit traité correctement."),
-   ("Combien de temps dure un rachat ?", "Le temps de l'estimation, de l'expertise et de la signature des documents. Une fois l'offre acceptée, la vente peut être finalisée rapidement ; le délai de règlement est précisé dans l'offre écrite."),
+   ("Combien de temps dure un rachat ?", "Un conseiller se déplace chez vous dans les 24 h suivant votre demande ; l'expertise, l'offre ferme et la signature des documents peuvent se faire sur place. Le règlement a lieu par virement ou en espèces (dans la limite légale)."),
   ]),
  dict(slug="rachat-voiture-sans-permis-morbihan", nav="Sans permis", name="voiture sans permis", h1="Rachat de voiture sans permis dans le Morbihan",
   title="Rachat voiture sans permis Morbihan | Aixam, Ligier, Microcar",
@@ -94,13 +96,13 @@ VEHICLES = [
    ("Quels camping-cars sont repris ?", "Profilés, capucines, intégraux, vans et fourgons aménagés, sur base Fiat Ducato, Citroën Jumper, Peugeot Boxer, Renault Master, Mercedes Sprinter ou Ford Transit. Les marques d'aménagement courantes (Rapido, Pilote, Challenger, Bürstner, Hymer, Dethleffs, Adria, Font Vendôme…) sont étudiées modèle par modèle."),
    ("Ce que nous regardons en priorité", "L'état de la cellule (traces d'humidité ou d'infiltration), le moteur et la boîte, le kilométrage, l'âge, le poids total autorisé en charge, les équipements (panneaux solaires, toit relevable, porte-vélos, chauffage, frigo) et la présence du carnet d'entretien et des factures."),
    ("Vendre sans contrôle technique à fournir", "Pour une vente à un professionnel, le contrôle technique n'est pas demandé. Si votre camping-car est en panne, a séjourné longtemps à l'arrêt ou nécessite des réparations, il peut quand même être étudié."),
-   ("Démarches et paiement", "Nous établissons le certificat de cession, vérifions la situation administrative du véhicule et déclarons la cession. Vous recevez une offre écrite avant toute signature."),
+   ("Démarches et paiement", "Nous établissons le certificat de cession, vérifions la situation administrative du véhicule et déclarons la cession. Vous recevez une offre écrite avant toute signature, puis vous êtes réglé par virement ou en espèces (dans la limite légale)."),
   ],
   faq=[
    ("Rachetez-vous un camping-car qui n'a pas roulé depuis longtemps ?", "Oui, il est étudié sur place. Un camping-car resté à l'arrêt peut nécessiter une remise en route ; ce coût est pris en compte dans l'offre."),
    ("Reprenez-vous les vans et fourgons aménagés ?", "Oui. Les vans aménagés, fourgons transformés et camions aménagés sont repris selon leur état, leur équipement et la conformité de l'aménagement."),
    ("Qu'est-ce qui décote le plus un camping-car à la revente ?", "Surtout l'humidité dans la cellule, un kilométrage élevé, un entretien incomplet et un moteur fatigué. Des factures d'entretien à jour valorisent le véhicule."),
-   ("Dois-je venir à vous avec mon camping-car ?", "L'expertise se fait sur rendez-vous. Pour un véhicule volumineux ou non roulant, indiquez-le dans la demande : nous étudions la meilleure organisation."),
+   ("Dois-je venir à vous avec mon camping-car ?", "Non. Un conseiller se déplace à votre domicile dans les 24 h suivant votre demande, y compris pour un véhicule volumineux ou non roulant."),
   ]),
  dict(slug="rachat-utilitaire-morbihan", nav="Utilitaire", name="utilitaire", h1="Rachat d'utilitaire dans le Morbihan",
   title="Rachat utilitaire Morbihan | Fourgon, camionnette – Reprise Auto Express",
@@ -157,7 +159,7 @@ VEHICLES = [
   sections=[
    ("Quels véhicules HS sont repris ?", "Voitures, voitures sans permis, utilitaires et camping-cars avec une panne moteur, une boîte de vitesses hors d'usage, un embrayage, une turbo ou un injecteur défaillant, une casse suite à un sinistre, un incendie partiel ou une inondation. Chaque dossier est étudié selon les pièces concernées et la valeur de marché du modèle."),
    ("Comment le prix d'un véhicule HS est fixé", "On part de la valeur du véhicule en bon état, puis on déduit le coût de la réparation ou de la remise en état. Parfois, le véhicule garde une valeur de pièces ou d'export : c'est pris en compte."),
-   ("Enlèvement et papiers", "Si votre véhicule ne roule plus, l'enlèvement peut être étudié selon sa localisation dans le Morbihan. Indiquez l'adresse (commune et code postal) pour une organisation adaptée. Carte grise, pièce d'identité et certificat de situation administrative suffisent en général."),
+   ("Enlèvement et papiers", "Un conseiller se déplace à votre domicile dans les 24 h. Si votre véhicule ne roule plus, l'enlèvement peut être étudié selon sa localisation dans le Morbihan. Indiquez l'adresse (commune et code postal) pour une organisation adaptée. Carte grise, pièce d'identité et certificat de situation administrative suffisent en général."),
    ("Épave ou véhicule économiquement irréparable", "Certains véhicules fortement endommagés relèvent d'une procédure réglementaire spécifique. Nous vous indiquons la marche à suivre au cas par cas."),
   ],
   faq=[
@@ -170,13 +172,15 @@ VEHICLES = [
 VBY = {v["slug"]: v for v in VEHICLES}
 
 HOME_FAQ = [
- ("Comment fonctionne le rachat de ma voiture à Vannes ?", "Vous remplissez la demande d'estimation en ligne, un conseiller vous recontacte, le véhicule est expertisé, puis vous recevez une offre ferme. Si vous acceptez, les documents de cession sont signés et la vente est finalisée, sans obligation d'achat."),
+ ("Comment fonctionne le rachat de ma voiture à Vannes ?", "Vous remplissez la demande d'estimation en ligne, un conseiller vous recontacte et se déplace chez vous dans les 24 h pour expertiser le véhicule, puis vous recevez une offre ferme. Si vous acceptez, les documents de cession sont signés et vous êtes payé, sans obligation d'achat."),
  ("Faut-il un contrôle technique pour vendre à un professionnel ?", "Non. Le contrôle technique de moins de 6 mois est obligatoire pour vendre à un particulier, pas pour une reprise par un professionnel. Votre véhicule est repris sans CT, dans l'état."),
  ("Rachetez-vous les voitures HS, en panne ou accidentées ?", "Oui, elles sont étudiées au cas par cas. Le coût des réparations est déduit de la valeur du véhicule en bon état, et l'enlèvement peut être organisé dans le Morbihan."),
  ("Quels véhicules rachetez-vous ?", "Voitures, voitures sans permis, camping-cars, utilitaires et camions, particuliers comme professionnels, en essence, diesel, hybride ou électrique."),
  ("Quels documents faut-il fournir ?", "La carte grise, une pièce d'identité, les clés (si possible le double), le carnet d'entretien et, si vous en avez un, le dernier contrôle technique. Nous préparons le certificat de cession avec vous."),
  ("Comment le prix de rachat est-il calculé ?", "À partir de la cote du modèle, des options, de l'état constaté, des réparations à prévoir et des véhicules comparables dans la région. Après expertise, l'offre est ferme et écrite."),
  ("Dois-je acheter un autre véhicule pour vendre le mien ?", "Non. Le rachat est indépendant de tout achat. Vous vendez votre véhicule sans aucune obligation."),
+ ("Vous déplacez-vous à domicile ?", "Oui. Un conseiller se déplace à votre domicile dans les 24 h suivant votre demande, examine le véhicule et vous remet une offre ferme. Aucun déplacement de votre part n'est nécessaire."),
+ ("Comment suis-je payé : espèces ou virement ?", "Au choix : virement bancaire ou espèces. Le paiement en espèces est plafonné par la loi (1 000 € pour une transaction avec un professionnel) ; au-delà, le règlement se fait par virement."),
  ("Puis-je vendre un véhicule encore en crédit ?", "Dans certains cas oui, si le solde est régularisé auprès de l'organisme de financement. Indiquez-le dès votre demande."),
  ("Quelles communes du Morbihan couvrez-vous ?", "Toutes les communes du département, de Vannes à Lorient, Pontivy, Ploërmel, Auray, Questembert ou Sarzeau, soit les 76 codes postaux du Morbihan (56)."),
  ("Quelle différence entre une estimation en ligne et une offre ferme ?", "Une estimation en ligne est indicative. L'offre ferme est établie après expertise du véhicule : c'est le montant que vous recevez si vous acceptez."),
@@ -186,9 +190,9 @@ HOME_FAQ = [
 
 STEPS = [
  ("Estimation", "Vous remplissez le formulaire avec la marque, le modèle, l'année, le kilométrage et l'état de votre véhicule."),
- ("Expertise", "Un conseiller vous rappelle et fixe un rendez-vous pour examiner le véhicule."),
+ ("Déplacement", "Un conseiller vous rappelle et se déplace à votre domicile dans les 24 h pour examiner le véhicule."),
  ("Offre ferme", "Vous recevez une offre écrite et ferme, sans obligation d'achat."),
- ("Signature", "Vous signez le certificat de cession. Nous déclarons la cession à votre place."),
+ ("Signature et paiement", "Vous signez le certificat de cession et vous êtes réglé par virement ou en espèces (dans la limite légale). Nous déclarons la cession à votre place."),
 ]
 
 NEAR_VANNES = ["Séné","Saint-Avé","Arradon","Plescop","Theix-Noyalo","Surzur","Sarzeau","Elven","Monterblanc","Meucon","Ploeren","Saint-Nolff","Sulniac","Grand-Champ","Baden","Île-aux-Moines","Larmor-Baden","Le Hézo","Arzon","Locmariaquer","Auray","Questembert","Muzillac","Pluneret"]
@@ -260,7 +264,7 @@ def ld_faq(faq):
 def ld_business():
     b = {"@context": "https://schema.org", "@type": ["LocalBusiness", "AutomotiveBusiness"], "@id": url("/#business"),
          "name": BRAND, "url": url("/"), "image": url("/assets/og-reprise-auto-express.jpg"),
-         "description": "Rachat de voiture, voiture sans permis, camping-car, utilitaire et camion à Vannes et dans tout le Morbihan, sans contrôle technique, même HS.",
+         "description": "Rachat de voiture, voiture sans permis, camping-car, utilitaire et camion à Vannes et dans tout le Morbihan, sans contrôle technique, même HS. Déplacement à domicile sous 24 h, paiement par virement ou en espèces.",
          "areaServed": [{"@type": "AdministrativeArea", "name": "Morbihan"}] + [{"@type": "City", "name": c} for c in TOP],
          "knowsAbout": ["Rachat de voiture", "Reprise de véhicule", "Voiture sans permis", "Camping-car", "Utilitaire", "Camion", "Véhicule sans contrôle technique", "Véhicule HS"],
          "serviceType": "Rachat de véhicules d'occasion"}
@@ -309,12 +313,24 @@ def compare_table():
 <tr><th>Contrôle technique de moins de 6 mois</th><td>Obligatoire</td><td>Non</td><td>Non</td></tr>
 <tr><th>Véhicule HS, accidenté, très kilométré</th><td>Très difficile</td><td>Souvent refusé</td><td>Étudié au cas par cas</td></tr>
 <tr><th>Obligation d'achat d'un autre véhicule</th><td>Non</td><td>Souvent liée</td><td>Non</td></tr>
+<tr><th>Déplacement à domicile</th><td>Vous recevez des visiteurs</td><td>Vous vous déplacez</td><td>Oui, sous 24 h</td></tr>
+<tr><th>Paiement</th><td>Variable, risque d'impayé</td><td>Variable</td><td>Virement ou espèces (limite légale)</td></tr>
 <tr><th>Démarches de cession</th><td>À votre charge</td><td>Prises en charge</td><td>Prises en charge</td></tr>
 <tr><th>Offre ferme après expertise</th><td>Négociable</td><td>Oui</td><td>Oui</td></tr></tbody></table></div></div></section>"""
 
 def zone_links(names, title):
     lis = "".join(f'<li><a href="/reprise-voiture-{BY_SLUG[slugify(n)]["slug"]}/">{E(n)}</a></li>' for n in names)
     return f'<section class="sec"><div class="wrap"><h2>{title}</h2><ul class="chips">{lis}</ul></div></section>'
+
+def enriched_html(c, e):
+    nm = c["name"]
+    for n in e["voisines"]:
+        assert slugify(n) in BY_SLUG, n
+    vs = ", ".join(f'<a href="/reprise-voiture-{BY_SLUG[slugify(n)]["slug"]}/">{E(n)}</a>' for n in e["voisines"])
+    return (f'<section class="sec alt"><div class="wrap narrow"><h2>Vendre son véhicule {prep(nm)} : le secteur</h2>'
+            f'<p>{E(e["desc"])}</p><p>{E(e["atout"])}</p>'
+            f'<p><b>Communes voisines couvertes :</b> {vs}.</p>'
+            f'<h3>Un conseiller chez vous sous 24 h</h3><p>Pour {E(nm)} comme pour les communes voisines, un conseiller se déplace à votre domicile dans les 24 h suivant votre demande, examine le véhicule, vous remet une offre ferme et prépare le certificat de cession. Le règlement se fait par virement ou en espèces, dans la limite fixée par la loi.</p></div></section>')
 
 def page(path, title, desc, schema, body, crumbs=None, hero=""):
     out = head(title, desc, path, schema) + header()
@@ -328,8 +344,8 @@ def page(path, title, desc, schema, body, crumbs=None, hero=""):
 def hero(h1, lead, kicker, show_img=True):
     img = '<img class="hero-img" src="/assets/reprise-auto-express-logo.jpg" width="360" height="421" alt="Reprise Auto Express – rachat de véhicule et utilitaire, remise de clés et paiement" fetchpriority="high">' if show_img else ""
     return f"""<section class="hero"><div class="wrap hero-in"><div><p class="kicker">{kicker}</p><h1>{h1}</h1><p class="lead">{lead}</p>
-<ul class="ticks"><li>Sans contrôle technique, même HS</li><li>Offre ferme après expertise</li><li>Sans obligation d'achat</li><li>Démarches de cession prises en charge</li></ul>
-<p><a class="btn btn-red btn-lg" href="#estimation">Estimer mon véhicule</a> {f'<a class="btn btn-ghost btn-lg" href="{phone_href()}">Appeler {E(PHONE)}</a>' if PHONE else ''}</p></div>{img}</div></section>"""
+<ul class="ticks"><li>Déplacement à domicile sous 24 h</li><li>Sans contrôle technique, même HS</li><li>Offre ferme, sans obligation d'achat</li><li>Paiement par virement ou en espèces*</li></ul>
+<p><a class="btn btn-red btn-lg" href="#estimation">Estimer mon véhicule</a> {f'<a class="btn btn-ghost btn-lg" href="{phone_href()}">Appeler {E(PHONE)}</a>' if PHONE else ''}</p><p class="fine">* Espèces dans la limite fixée par la loi (1 000 € pour une transaction avec un professionnel).</p></div>{img}</div></section>"""
 
 def tldr(items):
     li = "".join(f"<li>{x}</li>" for x in items)
@@ -355,7 +371,8 @@ def build():
         "<b>Véhicules :</b> voiture, voiture sans permis, camping-car, utilitaire, camion.",
         "<b>Sans contrôle technique</b> à fournir : le CT de moins de 6 mois n'est exigé que pour une vente à un particulier.",
         "<b>Même HS :</b> panne, moteur ou boîte cassés, accident, véhicule non roulant : étudié au cas par cas.",
-        "<b>Offre ferme</b> et écrite après expertise, <b>sans obligation d'achat</b>, démarches de cession prises en charge.",
+        "<b>Déplacement à domicile sous 24 h</b>, offre ferme et écrite après expertise, <b>sans obligation d'achat</b>.",
+        "<b>Paiement</b> par virement ou en espèces (dans la limite légale).",
     ])
     body += steps_html()
     body += vehicles_grid()
@@ -363,6 +380,7 @@ def build():
 <p>Vendre sa voiture entre particuliers prend du temps : photos, annonce, appels, visites, négociations, contrôle technique de moins de 6 mois, risque d'impayé. Le rachat par un professionnel simplifie tout : vous présentez le véhicule, vous recevez une offre ferme, vous signez.</p>
 <h3>Rachat sans contrôle technique</h3><p>Pour la reprise par un professionnel de l'automobile, le contrôle technique n'est pas demandé. Votre véhicule est repris dans l'état, avec ses défauts, sans passage préalable en centre de contrôle.</p>
 <h3>Rachat de véhicule HS, en panne ou accidenté</h3><p>Une panne coûteuse ou un accident ne rend pas votre véhicule invendable. Nous estimons le coût de remise en état et le déduisons de la valeur de marché pour vous proposer un prix réaliste.</p>
+<h3>Un conseiller chez vous sous 24 h</h3><p>Vous n'avez pas à vous déplacer : un conseiller vient à votre domicile dans les 24 h suivant votre demande, examine le véhicule et vous remet une offre ferme. Vous êtes réglé par virement ou en espèces (dans la limite fixée par la loi).</p>
 <h3>Un seul interlocuteur, des démarches prises en charge</h3><p>Nous préparons le certificat de cession et déclarons la cession à votre place, ce qui vous décharge de la responsabilité du véhicule. Il vous reste à informer votre assureur.</p></div></section>"""
     body += """<section class="sec alt"><div class="wrap narrow"><h2>Comment est calculé le prix de rachat ?</h2>
 <p>Le prix repose sur la valeur de marché du modèle (cote, annonces comparables dans la région), puis sur ce que nous constatons : année, kilométrage, version, options, état de la carrosserie et de la mécanique, historique d'entretien. Les réparations nécessaires sont chiffrées et déduites. Après l'expertise, l'offre est <b>ferme</b> : le montant annoncé est celui qui est proposé à la signature.</p>
@@ -391,6 +409,7 @@ def build():
         body += tldr([f"Rachat de <b>{v['name']}</b> dans tout le Morbihan, par un professionnel, dans l'état.",
                       "Contrôle technique non exigé pour une vente à un professionnel.",
                       "Offre ferme et écrite après expertise, sans obligation d'achat.",
+                      "Déplacement à domicile sous 24 h, paiement par virement ou en espèces (dans la limite légale).",
                       "Certificat et déclaration de cession préparés avec vous."])
         for t, p in v["sections"]:
             body += f'<section class="sec"><div class="wrap narrow"><h2>{E(t)}</h2><p>{E(p)}</p></div></section>'
@@ -407,12 +426,13 @@ def build():
     path = "/reprise-voiture-vannes/"
     crumbs = [("Accueil", "/"), ("Reprise voiture Vannes", path)]
     vfaq = [
-     ("Où faire racheter sa voiture à Vannes ?", "Chez Reprise Auto Express, qui rachète les véhicules à Vannes (56000) et dans tout le Morbihan. Vous demandez une estimation en ligne, puis le véhicule est expertisé et une offre ferme vous est remise."),
+     ("Où faire racheter sa voiture à Vannes ?", "Chez Reprise Auto Express, qui rachète les véhicules à Vannes (56000) et dans tout le Morbihan. Vous demandez une estimation en ligne, un conseiller se déplace à votre domicile dans les 24 h, expertise le véhicule et vous remet une offre ferme."),
      ("Peut-on vendre sa voiture à Vannes sans contrôle technique ?", "Oui, pour une vente à un professionnel le contrôle technique n'est pas demandé. Le contrôle de moins de 6 mois n'est exigé que pour la vente à un particulier."),
      ("Rachetez-vous les voitures HS ou accidentées à Vannes ?", "Oui, au cas par cas. Le coût des réparations est déduit de la valeur du véhicule, et l'enlèvement peut être étudié autour de Vannes."),
      ("Quels véhicules rachetez-vous à Vannes ?", "Voitures, voitures sans permis, camping-cars, utilitaires et camions, pour les particuliers et les professionnels du Vannetais."),
      ("Quelles communes autour de Vannes sont couvertes ?", "Séné, Saint-Avé, Arradon, Plescop, Theix-Noyalo, Elven, Sarzeau, Grand-Champ, Ploeren, Monterblanc, Meucon, Saint-Nolff, Sulniac et toutes les communes du Morbihan."),
      ("Dois-je acheter un autre véhicule pour vendre le mien ?", "Non. Le rachat est sans obligation d'achat."),
+     ("Comment suis-je payé à Vannes ?", "Par virement bancaire ou en espèces, selon votre choix. Le paiement en espèces est plafonné par la loi (1 000 € pour une transaction avec un professionnel) ; au-delà, le règlement se fait par virement."),
      ("Quels documents faut-il pour vendre à Vannes ?", "Carte grise, pièce d'identité, clés, carnet d'entretien si disponible. Le certificat de cession est établi avec vous."),
      ("Comment est fixé le prix de reprise à Vannes ?", "À partir de la cote du modèle, de l'état constaté, des réparations à prévoir et des véhicules comparables proposés dans la région. L'offre est ferme après expertise."),
     ]
@@ -460,7 +480,11 @@ def build():
          (f"Rachetez-vous les véhicules HS ou accidentés {prep(nm)} ?", f"Oui, au cas par cas. Le coût des réparations est déduit de la valeur du véhicule. Indiquez {nm} ({cp}) dans votre demande pour étudier l'enlèvement si le véhicule ne roule plus."),
          (f"Quels véhicules rachetez-vous {prep(nm)} ?", f"Voitures, voitures sans permis, camping-cars, utilitaires et camions, pour les particuliers et les professionnels {prep(nm)} et dans les communes voisines."),
          (f"Dois-je acheter un autre véhicule pour vendre le mien {prep(nm)} ?", "Non. Le rachat est indépendant de tout achat : vous vendez sans obligation."),
+         (f"Vous déplacez-vous à domicile {prep(nm)} ?", f"Oui. Un conseiller se déplace chez vous {prep(nm)} ({cp}) dans les 24 h suivant votre demande, examine le véhicule et vous remet une offre ferme."),
+         (f"Comment suis-je payé {prep(nm)} : espèces ou virement ?", "Au choix : virement bancaire ou espèces. Le paiement en espèces est plafonné par la loi (1 000 € pour une transaction avec un professionnel) ; au-delà, le règlement se fait par virement."),
         ]
+        e = ENRICH.get(c["slug"])
+        if e: faq.append(e["faq"])
         body = form(f"{nm} ({cp})")
         body += tldr([f"Rachat de véhicules {prep(nm)} ({cp}), Morbihan (56).",
                       "Sans contrôle technique, même HS ou en panne.",
@@ -468,10 +492,11 @@ def build():
                       "Cession et démarches préparées avec vous."])
         i = hv(c["slug"], 3)
         body += f'<section class="sec"><div class="wrap narrow"><h2>Reprise de véhicule {prep(nm)} ({cp})</h2><p>{intro[i].format(prep=prep(nm), name=nm, cp=cp)}</p>'
-        body += f'<p>Le prix est calculé à partir de la valeur de marché de votre modèle, de son état et des réparations éventuelles. Vous recevez une offre écrite : si vous acceptez, nous préparons le certificat de cession et déclarons la cession à votre place.</p>'
+        body += f'<p>Un conseiller se déplace chez vous {prep(nm)} dans les 24 h suivant votre demande. Le prix est calculé à partir de la valeur de marché de votre modèle, de son état et des réparations éventuelles. Vous recevez une offre écrite : si vous acceptez, nous préparons le certificat de cession, déclarons la cession à votre place et vous réglons par virement ou en espèces (dans la limite légale).</p>'
         if same:
             body += f'<p>Le code postal {cp} regroupe aussi : ' + ", ".join(f'<a href="/reprise-voiture-{x["slug"]}/">{E(x["name"])}</a>' for x in same) + ".</p>"
         body += "</div></section>"
+        if e: body += enriched_html(c, e)
         body += steps_html()
         cards = "".join(f'<a class="card" href="/{v["slug"]}/"><h3>{E(v["nav"])} {prep(nm) if False else ""}</h3><p>{E(v["h1"])}</p></a>' for v in VEHICLES[:5])
         body += f'<section class="sec alt"><div class="wrap"><h2>Véhicules rachetés {prep(nm)}</h2><div class="cards">{cards}</div></div></section>'
@@ -564,6 +589,8 @@ def build():
 - Sans contrôle technique : le CT de moins de 6 mois n'est obligatoire que pour une vente à un particulier.
 - Véhicules HS, en panne ou accidentés : étudiés au cas par cas, coût des réparations déduit.
 - Offre ferme et écrite après expertise, sans obligation d'achat.
+- Déplacement à domicile d'un conseiller dans les 24 h suivant la demande.
+- Paiement par virement ou en espèces (plafond légal de 1 000 € en espèces pour une transaction avec un professionnel).
 - Cession : certificat et déclaration de cession préparés avec le vendeur.
 
 ## Pages principales
