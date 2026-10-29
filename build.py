@@ -8,13 +8,13 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "dist")
 
 # ------------------------------------------------------------------ CONFIG
-SITE_URL = os.environ.get("SITE_URL", "https://reprise-auto-express.pages.dev").rstrip("/")
-PREPROD = os.environ.get("PREPROD", "1") == "1"   # 1 = noindex tant que le domaine final n'est pas branché
+SITE_URL = os.environ.get("SITE_URL", "https://repriseautoexpress.online").rstrip("/")
+PREPROD = os.environ.get("PREPROD", "0") == "1"   # 1 = noindex tant que le domaine final n'est pas branché
 BRAND = "Reprise Auto Express"
 PHONE = os.environ.get("PHONE", "")       # ex: "02 97 00 00 00"
-EMAIL = os.environ.get("EMAIL", "")       # ex: "contact@..."
+EMAIL = os.environ.get("EMAIL", "dawsondelorme91@gmail.com")       # ex: "contact@..."
 ADDRESS = os.environ.get("ADDRESS", "")   # ex: "12 rue ..., 56000 Vannes"
-TODAY = "2026-10-28"
+TODAY = "2026-10-29"
 
 # ------------------------------------------------------------------ DONNÉES
 def slugify(s):
