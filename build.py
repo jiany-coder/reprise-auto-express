@@ -295,7 +295,7 @@ def form(default_commune=""):
 <label>E-mail<input name="mail" type="email" autocomplete="email"></label></div></details>
 <datalist id="communes">{opts}</datalist>
 <button class="btn btn-red btn-lg btn-block" type="submit">Recevoir mon estimation</button>
-<p class="fine">Les informations transmises servent uniquement à étudier votre demande et à vous recontacter.</p>
+<p class="fine">Les informations transmises servent uniquement à étudier votre demande et à vous recontacter. Contact : {E(EMAIL)}</p>
 <p id="est-msg" class="msg" role="status" hidden></p></form></div></div></section>"""
 
 def steps_html():
@@ -416,7 +416,7 @@ def build():
     body += zone_links(TOP, "Rachat de voiture dans les principales villes du Morbihan")
     body += f'<section class="sec alt"><div class="wrap narrow"><h2>Nous intervenons dans tout le Morbihan (56)</h2><p>Les 76 codes postaux et toutes les communes du département sont couverts, de la presqu\'île de Rhuys au pays de Pontivy, du golfe du Morbihan à Lorient et au pays de Ploërmel. <a href="/zone-intervention-morbihan/">Voir tous les codes postaux et toutes les communes du Morbihan</a>.</p></div></section>'
     body += faq_html(HOME_FAQ)
-    body += '<section class="sec cta-band"><div class="wrap"><h2>Prêt à vendre votre véhicule ?</h2><p>Estimation gratuite, sans obligation.</p><a class="btn btn-red btn-lg" href="#estimation">Estimer mon véhicule</a></div></section>'
+    body += '<section class="sec cta-band"><div class="wrap"><h2>Prêt à vendre votre véhicule ?</h2><p>Estimation gratuite, sans obligation.</p><a class="btn btn-red btn-lg" href="#estimation">Estimer mon véhicule</a>' + (f'<p style="margin-top:14px">Ou écrivez-nous : <a style="color:#fff;font-weight:700" href="mailto:{E(EMAIL)}">{E(EMAIL)}</a></p>' if EMAIL else '') + '</div></section>'
     schema = [ld_business(),
               {"@context": "https://schema.org", "@type": "WebSite", "@id": url("/#website"), "url": url("/"), "name": BRAND, "inLanguage": "fr-FR", "publisher": {"@id": url("/#business")}},
               ld_service("Rachat de véhicules dans le Morbihan", "/", {"@type": "AdministrativeArea", "name": "Morbihan"}),
@@ -578,7 +578,7 @@ def build():
     path = "/mentions-legales/"
     body = """<section class="sec"><div class="wrap narrow"><h1>Mentions légales</h1>
 <p><b>Éditeur du site :</b> [raison sociale] – [forme juridique] – SIRET [numéro] – [adresse].</p>
-<p><b>Directeur de la publication :</b> [nom].</p><p><b>Contact :</b> [e-mail] – [téléphone].</p>
+<p><b>Directeur de la publication :</b> [nom].</p><p><b>Contact :</b> """ + (EMAIL or "[e-mail]") + """ – [téléphone].</p>
 <p><b>Hébergement :</b> Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis.</p>
 <p><b>Données personnelles :</b> les informations saisies dans le formulaire d'estimation servent uniquement à étudier votre demande et à vous recontacter. Vous pouvez exercer vos droits d'accès, de rectification et de suppression en écrivant à l'adresse ci-dessus.</p></div></section>"""
     page(path, "Mentions légales – Reprise Auto Express", "Mentions légales du site Reprise Auto Express.", [ld_breadcrumb([("Accueil", "/"), ("Mentions légales", path)])], body, None)
