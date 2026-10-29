@@ -580,7 +580,7 @@ def build():
 <p><b>Éditeur du site :</b> [raison sociale] – [forme juridique] – SIRET [numéro] – [adresse].</p>
 <p><b>Directeur de la publication :</b> [nom].</p><p><b>Contact :</b> """ + (EMAIL or "[e-mail]") + """ – [téléphone].</p>
 <p><b>Hébergement :</b> Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis.</p>
-<p><b>Données personnelles :</b> les informations saisies dans le formulaire d'estimation servent uniquement à étudier votre demande et à vous recontacter. Vous pouvez exercer vos droits d'accès, de rectification et de suppression en écrivant à l'adresse ci-dessus.</p></div></section>"""
+<p><b>Données personnelles :</b> les informations saisies dans le formulaire d'estimation servent uniquement à étudier votre demande et à vous recontacter. Ces informations sont transmises par e-mail via le service FormSubmit. Vous pouvez exercer vos droits d'accès, de rectification et de suppression en écrivant à l'adresse ci-dessus.</p></div></section>"""
     page(path, "Mentions légales – Reprise Auto Express", "Mentions légales du site Reprise Auto Express.", [ld_breadcrumb([("Accueil", "/"), ("Mentions légales", path)])], body, None)
 
     # ---------- 404
